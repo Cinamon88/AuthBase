@@ -11,6 +11,8 @@ const loggedIn = (req, res, next) => {
 
 router.get('/logged', loggedIn, (req, res) => {
   res.render('logged', {
+    user: req.user.displayName,
+    avatar: req.user.photos[0].value,
   });
 });
 
