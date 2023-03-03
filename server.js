@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -9,12 +10,13 @@ const session = require('express-session');
 const app = express();
 
 passport.use(new GoogleStrategy({
-    clientID: '1041113793900-e2jie7pk2msmoma7mvqgqv8klhis2j9r.apps.googleusercontent.com',
-    clientSecret: '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',
-    callbackURL: 'http://localhost:8000/auth/google/callback'
+  clientID: process.env.clientID,
+  clientSecret: process.env.clientSecret,
+  callbackURL: process.env.callbackURL,
   }, (accessToken, refreshToken, profile, done) => {
   done(null, profile);
 }));
+
 
 // serialize user when saving to session
 passport.serializeUser((user, serialize) => {
@@ -30,6 +32,15 @@ app.use(session({ secret: 'anything' }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.get('/auth/google',
+  passport.authenticate('google', { scope: ['email', 'profile'] }));
+
+app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/user/no-permission' }),
+  (req, res) => {
+    res.redirect('/user/logged');
+  }
+);
+
 app.engine('hbs', hbs({ extname: 'hbs', layoutsDir: './layouts', defaultLayout: 'main' }));
 app.set('view engine', '.hbs');
 
@@ -41,15 +52,6 @@ app.use(express.static(path.join(__dirname, '/public')));
 app.get('/', (req, res) => {
   res.render('index');
 });
-
-app.get('/auth/google',
-  passport.authenticate('google', { scope: ['email', 'profile'] }));
-
-app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/user/no-permission' }),
-  (req, res) => {
-    res.redirect('/user/logged');
-  }
-);
 
 app.get('/user/logged', (req, res) => {
   res.render('logged');
