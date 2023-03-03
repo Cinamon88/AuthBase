@@ -26,5 +26,9 @@ router.get('/profile/settings', loggedIn, (req, res) => {
     res.render('profileSettings');
 });
 
+router.get("/logout", (req, res) => {
+    res.render("logout");
+});
+
 
 module.exports = router;
