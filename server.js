@@ -42,6 +42,9 @@ app.get('/', (req, res) => {
   res.render('index');
 });
 
+app.get('/auth/google',
+  passport.authenticate('google', { scope: ['email', 'profile'] }));
+
 app.get('/user/logged', (req, res) => {
   res.render('logged');
 });
