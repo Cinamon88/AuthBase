@@ -45,6 +45,10 @@ app.get('/', (req, res) => {
 app.get('/auth/google',
   passport.authenticate('google', { scope: ['email', 'profile'] }));
 
+app.get('/auth/google/callback', (req, res) => {
+  res.send(`I'm back from Google!`);
+});
+
 app.get('/user/logged', (req, res) => {
   res.render('logged');
 });
